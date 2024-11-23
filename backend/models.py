@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from backend.views import validate_quantity
@@ -76,6 +77,29 @@ class ProductParameter(models.Model):
     class Meta:
         verbose_name = 'Параметр продукта'
         verbose_name_plural = 'Параметры продуктов'
+
+
+class User(AbstractUser):
+    login = email = models.EmailField(verbose_name='Электронная почта', blank=True)
+    password = models.CharField(max_length=100, verbose_name='Пароль')
+    patronymic = models.CharField(max_length=100, verbose_name='Отчество')
+    phone = models.CharField(max_length=50, verbose_name='Телефон')
+    city = models.CharField(max_length=100, verbose_name='Город')
+    street = models.CharField(max_length=100, verbose_name='Улица')
+    house = models.CharField(max_length=100, verbose_name='Дом')
+    building = models.CharField(max_length=100, verbose_name='Строение')
+    structure = models.CharField(max_length=100, verbose_name='Корпус')
+    flat = models.CharField(max_length=100, verbose_name='Квартира')
+    is_admin = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.login
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+        ordering = ['login']
+
 
 
 
