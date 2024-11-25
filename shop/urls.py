@@ -16,7 +16,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework.routers import DefaultRouter
+
+from backend.views import UserViewSet
+
+# from backend.views import RegisrerUser
+
+r = DefaultRouter()
+r.register(r'users', UserViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-]
+    # path('login/', login, name='login'),
+    # path('register/', RegisrerUser.as_view(), name='register'),
+] + r.urls

@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from backend.views import validate_quantity
+from backend.validators import validate_quantity
 
 
 class Shop(models.Model):
@@ -80,7 +80,7 @@ class ProductParameter(models.Model):
 
 
 class User(AbstractUser):
-    login = email = models.EmailField(verbose_name='Электронная почта', blank=True)
+    email = models.EmailField(verbose_name='Электронная почта', blank=False, unique=True)
     password = models.CharField(max_length=100, verbose_name='Пароль')
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
     phone = models.CharField(max_length=50, verbose_name='Телефон')
@@ -92,13 +92,16 @@ class User(AbstractUser):
     flat = models.CharField(max_length=100, verbose_name='Квартира')
     is_admin = models.BooleanField(default=False)
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
     def __str__(self):
-        return self.login
+        return self.email
 
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = ['login']
+        ordering = ['email']
 
 
 
