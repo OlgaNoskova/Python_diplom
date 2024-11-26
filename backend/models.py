@@ -1,3 +1,4 @@
+from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -79,7 +80,32 @@ class ProductParameter(models.Model):
         verbose_name_plural = 'Параметры продуктов'
 
 
+class CustomUserManager(BaseUserManager):               # Переопределение менеджера пользователя
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError("Поле электронной почты должно быть заполнено")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        print("Creating superuser...")
+        print(f"Email: {email}, Password: {password}, Extra Fields: {extra_fields}")
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+
+        if not extra_fields.get("is_staff"):
+            raise ValueError("Суперпользователь должен иметь is_staff=True.")
+        if not extra_fields.get("is_superuser"):
+            raise ValueError("Суперпользователь должен иметь is_superuser=True")
+
+        return self.create_user(email=email, password=password, **extra_fields)
+
+
 class User(AbstractUser):
+    username = None
     email = models.EmailField(verbose_name='Электронная почта', blank=False, unique=True)
     password = models.CharField(max_length=100, verbose_name='Пароль')
     patronymic = models.CharField(max_length=100, verbose_name='Отчество')
@@ -91,6 +117,9 @@ class User(AbstractUser):
     structure = models.CharField(max_length=100, verbose_name='Корпус')
     flat = models.CharField(max_length=100, verbose_name='Квартира')
     is_admin = models.BooleanField(default=False)
+
+    # Указываем, что менеджером для данной модели будет CustomUserManager
+    objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
