@@ -31,3 +31,7 @@ urlpatterns = [
     # path('login/', login, name='login'),
     # path('register/', RegisrerUser.as_view(), name='register'),
 ] + r.urls
+
+
+admin.site.site_header = 'Панель администрирования'
+admin.site.index_title = 'Управление магазином'
